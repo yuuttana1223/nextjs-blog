@@ -5,8 +5,13 @@ import { getSortedPostsData } from "../lib/posts";
 import Link from "next/link";
 import Date from "../components/date";
 import { GetStaticProps, NextPage } from "next";
+import { Post } from "../types/post";
 
-const Home: NextPage<{ allPostsData: any }> = ({ allPostsData }) => {
+type HomeProps = {
+  allPostsData: Omit<Post, "contentHtml">[];
+};
+
+const Home: NextPage<HomeProps> = ({ allPostsData }) => {
   return (
     <Layout home>
       <Head>
@@ -43,7 +48,7 @@ const Home: NextPage<{ allPostsData: any }> = ({ allPostsData }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const allPostsData = getSortedPostsData();
   return {
     props: {
