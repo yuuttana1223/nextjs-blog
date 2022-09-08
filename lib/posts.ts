@@ -45,7 +45,7 @@ export function getSortedPostsData(): Omit<Post, "contentHtml">[] {
   });
 }
 
-export function getAllPostIds() {
+export function getAllPostIds(): { params: { id: Post["id"] } }[] {
   const fileNames = fs.readdirSync(postsDirectory);
   return fileNames.map((fileName) => {
     return {
@@ -56,12 +56,20 @@ export function getAllPostIds() {
   });
 }
 
-export async function getPostData(id) {
+export async function getPostData(id: string) {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
 
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
+
+  if (typeof matterResult.data.title !== "string") {
+    throw new Error("Date is not a string");
+  }
+
+  if (typeof matterResult.data.date !== "string") {
+    throw new Error("Date is not a string");
+  }
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
@@ -72,7 +80,8 @@ export async function getPostData(id) {
   // Combine the data with the id and contentHtml
   return {
     id,
+    date: matterResult.data.date,
+    title: matterResult.data.title,
     contentHtml,
-    ...matterResult.data,
   };
 }

@@ -3,7 +3,7 @@ import { getAllPostIds, getPostData } from "../../lib/posts";
 import Head from "next/head";
 import Date from "../../components/date";
 import utilStyles from "../../styles/utils.module.css";
-import { NextPage, GetStaticProps } from "next";
+import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { Post } from "../../types/post";
 
 type PostProps = {
@@ -27,15 +27,23 @@ const Post: NextPage<PostProps> = ({ postData }) => {
   );
 };
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths<{ id: Post["id"] }> = () => {
   const paths = getAllPostIds();
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export const getStaticProps: GetStaticProps<Post> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<
+  PostProps,
+  { id: string }
+> = async ({ params }) => {
+  if (typeof params === "undefined") {
+    return {
+      notFound: true,
+    };
+  }
   const postData = await getPostData(params.id);
   return {
     props: {
