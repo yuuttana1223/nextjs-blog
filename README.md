@@ -1,1 +1,3 @@
-This is a final template for [Learn Next.js](https://nextjs.org/learn).
+## Next.js のチュートリアルを TypeScript に置き換える
+
+- 型ガードでライブラリで any になっているものに無理やり型を付ける
